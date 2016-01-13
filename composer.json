@@ -1,6 +1,7 @@
 {
     "name": "carpediem/errors",
     "type": "library",
+    "license": "MIT",
     "description" : "Capture errors",
     "keywords" : ["erros", "error reporting"],
     "require": {
