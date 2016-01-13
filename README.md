@@ -71,7 +71,7 @@ If no reporting level is given, the default value used will be `E_ALL`.
 
 ### Setting the error reporting level
 
-At any given time you can adjust te error reporting level using the `CaptureError::setErrorReportingLevel`. The method expects its single argument to be an integer that represents a supported PHP error level.
+At any given time you can adjust the error reporting level using the `CaptureError::setErrorReportingLevel`. The method expects its single argument to be an integer that represents a supported PHP error level.
 
 ```php
 use Carpediem\Errors\CaptureError;
@@ -124,14 +124,13 @@ Contributions are welcome and will be fully credited. Please see [CONTRIBUTING](
 Security
 -------
 
-If you discover any security related issues, please email nyamsprod@gmail.com instead of using the issue tracker.
+If you discover any security related issues, please email dev@carpediem.fr instead of using the issue tracker.
 
 Credits
 -------
 
 - [Bishop Bettini and Haldayne PHP Componentry](https://github.com/haldayne/fox)
-- [ignace nyamagana butera](https://github.com/nyamsprod)
-- [All Contributors](https://github.com/nyamsprod/errors/graphs/contributors)
+- [All Contributors](https://github.com/carpediem/errors/graphs/contributors)
 
 License
 -------
