@@ -1,6 +1,14 @@
 CaptureError
 ==========
 
+[![Latest Version](https://img.shields.io/github/release/carpediem/errors.svg?style=flat-square)](https://github.com/carpediem/errors/releases)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
+[![Build Status](https://img.shields.io/travis/carpediem/errors/master.svg?style=flat-square)](https://travis-ci.org/carpediem/errors)
+[![HHVM Status](https://img.shields.io/hhvm/carpediem/errors.svg?style=flat-square)](http://hhvm.h4cc.de/package/carpediem/errors)
+[![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/carpediem/errors.svg?style=flat-square)](https://scrutinizer-ci.com/g/carpediem/errors/code-structure)
+[![Quality Score](https://img.shields.io/scrutinizer/g/carpediem/errors.svg?style=flat-square)](https://scrutinizer-ci.com/g/carpediem/errors)
+[![Total Downloads](https://img.shields.io/packagist/dt/carpediem/errors.svg?style=flat-square)](https://packagist.org/packages/carpediem/errors)
+
 A Class to capture error from PHP. This class is based on [Haldayne\Fox\CaptureErrors](https://github.com/haldayne/fox) class.
 
 ## Installation
@@ -92,7 +100,7 @@ use Carpediem\Errors\CaptureError;
 $copy = new CaptureError('copy');
 $res = $copy->__invoke('/path/to/source/file.jpg', '/path/to/dest/file.jpg');
 //or
-$res = $copy('/path/to/source/file.csv', '/path/to/dest/file.csv');
+$res = $copy('/path/to/source/file.errors', '/path/to/dest/file.errors');
 ```
 
 ### Accessing the last error properties
