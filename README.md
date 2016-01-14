@@ -16,7 +16,7 @@ A Class to capture error from PHP. This class is based on [Haldayne\Fox\CaptureE
 The easiest way to install `Carpediem\CaptureError` is by using composer.
 
 ```bash
-$ composer require carpediem\capture-error
+$ composer require carpediem\errors
 ```
 
 ## Requirements
@@ -25,7 +25,7 @@ You need **PHP >= 5.4.0** but the latest stable version of PHP/HHVM is recommend
 
 ## Testing
 
-`CaptureError` has a [PHPUnit](https://phpunit.de) test suite and a coding style compliance test suite using [PHP CS Fixer](http://cs.sensiolabs.org/). To run the tests, run the following command from the project folder.
+The library has a [PHPUnit](https://phpunit.de) test suite and a coding style compliance test suite using [PHP CS Fixer](http://cs.sensiolabs.org/). To run the tests, run the following command from the project folder.
 
 ```bash
 $ composer test
@@ -33,7 +33,7 @@ $ composer test
 
 ## Usage
 
-Let's say you want to use PHP's `touch` function. This function return `false` and emit an `E_WARNING` if the file can not be created. A way to workaround this behavior is to use the `@` operator which is considered to be a bad practice as it silenced error reporting and slow down PHP execution. The `CaptureError` class helps you better handle these limitations.
+Let's say you want to use PHP's `touch` function. This function return `false` and emit an `E_WARNING` if the file can not be created. A way to workaround this behavior is to use the `@` operator which is considered to be a bad practice as it silenced error reporting and slow down PHP execution. The `CaptureError` and the `ErrorToException` classes help you better handle these limitations.
 
 
 ```php
@@ -56,9 +56,26 @@ if (!$result) {
 }
 ```
 
+The same code using `Carpediem\Errors\ErrorToException`
+
+```php
+use Carpediem\Errors\CaptureError;
+use Carpediem\Errors\ErrorToException;
+
+$touch = new ErrorToException(new CaptureError('touch'));
+try {
+	$result = $touch('/foo/bar');
+} catch (Exception $e) {
+	echo $e->getMessage();  // the same message as CaptureError::getLastErrorMessage
+	echo $e->getCode(); // the same message as CaptureError::getLastErrorCode
+}
+```
+
 ## Documentation
 
-### Instantiation
+### CaptureError object
+
+#### Instantiation
 
 Instantiating a `CaptureError` object is as simple as calling its constructor method with two arguments:
 
@@ -73,24 +90,14 @@ $copy = new CaptureError('copy', E_WARNING);
 $lambda = new CaptureError(function ($source, $destination) {
     return copy($source, $destination);
 });
+
+$error_level = $lambda->getErrorReportingLevel();
 ```
 
 If no reporting level is given, the default value used will be `E_ALL`.
-
-### Setting the error reporting level
-
-At any given time you can adjust the error reporting level using the `CaptureError::setErrorReportingLevel`. The method expects its single argument to be an integer that represents a supported PHP error level.
-
-```php
-use Carpediem\Errors\CaptureError;
-
-$copy = new CaptureError('copy');
-$copy->setErrorReportingLevel(E_ALL | E_NOTICE);
-$error_level = $copy->getErrorReportingLevel();
-```
 You can retrieve the current error reporting level with the `CaptureError::getErrorReportingLevel` getter method.
 
-### Processing the callable
+#### Processing the callable
 
 To process the registered callable you need to call the `CaptureError::__invoke` method with the expected parameters for the registered callable as follow:
 
@@ -103,7 +110,7 @@ $res = $copy->__invoke('/path/to/source/file.jpg', '/path/to/dest/file.jpg');
 $res = $copy('/path/to/source/file.errors', '/path/to/dest/file.errors');
 ```
 
-### Accessing the last error properties
+#### Accessing the last error properties
 
 If a error is emitted when executing the callable with the right error reporting level you will be able to access its code and message using the following methods:
 
@@ -123,6 +130,41 @@ If no error was caught:
 
 - `CaptureError::getLastErrorCode` will return `0`;
 - `CaptureError::getLastErrorMessage` will return an empty string;
+
+### ErrorToException object
+
+#### Instantiation
+
+To instantiate an `ErrorToException` object you need to specify
+
+- a `CaptureError` object  **required**;
+- The associated Exception class name you want to throw;
+
+```php
+use Carpediem\Errors\CaptureError;
+use Carpediem\Errors\ErrorToException;
+
+$copy = new ErrorToException(new CaptureError('copy', E_WARNING), 'RuntimeException');
+$exceptionName = $copy->getExceptionClass(); //returns the string 'RuntimeException'
+```
+
+If no exception class is given, the default value used will be `RuntimeException`.
+You can retrieve the current exception class name with the `ErrorToException::getExceptionClass` getter method.
+
+#### Running the code
+
+To process the registered `CaptureError` object you need to call the `ErrorToException::__invoke` method with the expected parameters as follow:
+
+```php
+use Carpediem\Errors\CaptureError;
+use Carpediem\Errors\ErrorToException;
+
+$copy = new ErrorToException(new CaptureError('copy', E_WARNING), 'RuntimeException');
+$res = $copy->__invoke('/path/to/source/file.jpg', '/path/to/dest/file.jpg');
+//or
+$res = $copy('/path/to/source/file.errors', '/path/to/dest/file.errors');
+```
+If the copy can not be achieved a `RuntimeException` object will be thrown.
 
 Contributing
 -------

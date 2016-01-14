@@ -32,8 +32,6 @@ class CaptureErrorTest extends PHPUnit_Framework_TestCase
     {
         $lambda = new CaptureError('strtoupper');
         $this->assertSame(E_ALL, $lambda->getErrorReporting());
-        $lambda->setErrorReporting(E_NOTICE);
-        $this->assertSame(E_NOTICE, $lambda->getErrorReporting());
     }
 
     /**

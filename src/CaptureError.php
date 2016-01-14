@@ -75,7 +75,7 @@ class CaptureError
      *
      * @throws InvalidArgumentException If the reporting level is not a positive int
      */
-    public function setErrorReporting($error_level)
+    protected function setErrorReporting($error_level)
     {
         if (!filter_var($error_level, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]])) {
             throw new InvalidArgumentException('Expected data must to be positive integer');
