@@ -39,7 +39,7 @@ class ErrorToExceptionTest extends PHPUnit_Framework_TestCase
     public function testGetExceptionClass()
     {
         $strtoupper = new ErrorToException(new CaptureError('strtoupper'));
-        $this->assertSame('RuntimeException', $strtoupper->getExceptionClass());
+        $this->assertSame('RuntimeException', $strtoupper->getExceptionClassName());
     }
 
     /**

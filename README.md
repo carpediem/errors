@@ -1,4 +1,4 @@
-CaptureError
+Errors
 ==========
 
 [![Latest Version](https://img.shields.io/github/release/carpediem/errors.svg?style=flat-square)](https://github.com/carpediem/errors/releases)
@@ -9,11 +9,11 @@ CaptureError
 [![Quality Score](https://img.shields.io/scrutinizer/g/carpediem/errors.svg?style=flat-square)](https://scrutinizer-ci.com/g/carpediem/errors)
 [![Total Downloads](https://img.shields.io/packagist/dt/carpediem/errors.svg?style=flat-square)](https://packagist.org/packages/carpediem/errors)
 
-A Class to capture error from PHP. This class is based on [Haldayne\Fox\CaptureErrors](https://github.com/haldayne/fox) class.
+This library helps capturing and transforming PHP's error into exception. Part of this library is based on the excellent work in the [Haldayne\Fox](https://github.com/haldayne/fox) project.
 
 ## Installation
 
-The easiest way to install `Carpediem\CaptureError` is by using composer.
+The easiest way to install `Carpediem\Errors` is by using composer.
 
 ```bash
 $ composer require carpediem\errors
@@ -33,7 +33,7 @@ $ composer test
 
 ## Usage
 
-Let's say you want to use PHP's `touch` function. This function return `false` and emit an `E_WARNING` if the file can not be created. A way to workaround this behavior is to use the `@` operator which is considered to be a bad practice as it silenced error reporting and slow down PHP execution. The `CaptureError` and the `ErrorToException` classes help you better handle these limitations.
+Let's say you want to use PHP's `touch` function. This function return `false` and emit an `E_WARNING` if the file can not be created. A way to workaround this behavior is to use the `@` operator which is considered to be a bad practice as it silenced error reporting and slow down PHP execution. The `Carpediem\Errors` library helps you better handle these limitations gradually.
 
 
 ```php
@@ -43,7 +43,7 @@ $result = touch('/foo/bar');
 // an E_WARNING is emitted with a associated message
 ```
 
-The same code using `Carpediem\Errors\CaptureError`
+If you want to capture the error from the `touch` function.
 
 
 ```php
@@ -56,7 +56,7 @@ if (!$result) {
 }
 ```
 
-The same code using `Carpediem\Errors\ErrorToException`
+If you want to convert the error from the `touch` function into an Exception.
 
 ```php
 use Carpediem\Errors\CaptureError;
@@ -131,13 +131,14 @@ If no error was caught:
 - `CaptureError::getLastErrorCode` will return `0`;
 - `CaptureError::getLastErrorMessage` will return an empty string;
 
+
 ### ErrorToException object
 
 #### Instantiation
 
 To instantiate an `ErrorToException` object you need to specify
 
-- a `CaptureError` object  **required**;
+- an object implementing the `CaptureErrorInterface` interface **required**;
 - The associated Exception class name you want to throw;
 
 ```php
@@ -145,7 +146,7 @@ use Carpediem\Errors\CaptureError;
 use Carpediem\Errors\ErrorToException;
 
 $copy = new ErrorToException(new CaptureError('copy', E_WARNING), 'RuntimeException');
-$exceptionName = $copy->getExceptionClass(); //returns the string 'RuntimeException'
+$exceptionName = $copy->getExceptionClassName(); //returns the string 'RuntimeException'
 ```
 
 If no exception class is given, the default value used will be `RuntimeException`.
@@ -165,6 +166,16 @@ $res = $copy->__invoke('/path/to/source/file.jpg', '/path/to/dest/file.jpg');
 $res = $copy('/path/to/source/file.errors', '/path/to/dest/file.errors');
 ```
 If the copy can not be achieved a `RuntimeException` object will be thrown.
+
+### CaptureErrorInterface Interface
+
+This interface exposes the following methods:
+
+- `CaptureErrorInterface::__invoke`
+- `CaptureErrorInterface::getLastErrorCode`
+- `CaptureErrorInterface::getLastErrorMessage`
+
+As described in the `CaptureError` documentation, because the `ErrorToException` expects this interface you can easily create your own object that will throw exception depending on the result of calling the `CaptureErrorInterface::__invoke` method.
 
 Contributing
 -------

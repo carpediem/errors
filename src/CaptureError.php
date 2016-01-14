@@ -4,7 +4,7 @@
 *
 * @license http://opensource.org/licenses/MIT
 * @link https://github.com/carpediem/errors/
-* @version 0.1.0
+* @version 0.2.0
 * @package Carpediem.errors
 *
 * For the full copyright and license information, please view the LICENSE
@@ -26,7 +26,7 @@ use InvalidArgumentException;
  *     throw new RuntimeException($touch->getLastErrorMessage());
  * }
  */
-class CaptureError
+class CaptureError implements CaptureErrorInterface
 {
     /**
      * The callable to be processed
@@ -95,11 +95,7 @@ class CaptureError
     }
 
     /**
-     * Process the callable
-     *
-     * @param mixed ...$args the arguments associated with the callable
-     *
-     * @return mixed
+     * @inheritdoc
      */
     public function __invoke()
     {
@@ -118,9 +114,7 @@ class CaptureError
     }
 
     /**
-     * Returns the last error code
-     *
-     * @return int
+     * @inheritdoc
      */
     public function getLastErrorCode()
     {
@@ -128,9 +122,7 @@ class CaptureError
     }
 
     /**
-     * Returns the last error message
-     *
-     * @return string
+     * @inheritdoc
      */
     public function getLastErrorMessage()
     {

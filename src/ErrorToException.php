@@ -4,7 +4,7 @@
 *
 * @license http://opensource.org/licenses/MIT
 * @link https://github.com/carpediem/errors/
-* @version 0.1.0
+* @version 0.2.0
 * @package Carpediem.errors
 *
 * For the full copyright and license information, please view the LICENSE
@@ -32,7 +32,7 @@ use InvalidArgumentException;
 class ErrorToException
 {
     /**
-     * @var CaptureError
+     * @var CaptureErrorInterface
      */
     protected $callable;
 
@@ -46,13 +46,13 @@ class ErrorToException
     /**
      * A new instance
      *
-     * @param CaptureError $callable
-     * @param string       $exception_class_name The exception to be thrown
+     * @param CaptureErrorInterface $callable
+     * @param string                $exception_class_name The exception to be thrown
      */
-    public function __construct(CaptureError $callable, $exception_class_name = 'RuntimeException')
+    public function __construct(CaptureErrorInterface $callable, $exception_class_name = 'RuntimeException')
     {
         $this->callable = $callable;
-        $this->setExceptionClass($exception_class_name);
+        $this->setExceptionClassName($exception_class_name);
     }
 
     /**
@@ -62,7 +62,7 @@ class ErrorToException
      *
      * @throws InvalidArgumentException If the class is not a throwable object
      */
-    public function setExceptionClass($className)
+    public function setExceptionClassName($className)
     {
         if (!$this->isThrowable($className) && !$this->isException($className)) {
             throw new InvalidArgumentException(sprintf(
@@ -103,7 +103,7 @@ class ErrorToException
      *
      * @return string
      */
-    public function getExceptionClass()
+    public function getExceptionClassName()
     {
         return $this->exception_class_name;
     }
@@ -118,11 +118,12 @@ class ErrorToException
     public function __invoke()
     {
         $result = call_user_func_array($this->callable, func_get_args());
-        $errorLevel = $this->callable->getErrorReporting();
-        $errorCode = $this->callable->getLastErrorCode();
         $errorMessage = $this->callable->getLastErrorMessage();
         if (!empty($errorMessage)) {
-            throw new $this->exception_class_name($errorMessage, $errorCode);
+            throw new $this->exception_class_name(
+                $errorMessage,
+                $this->callable->getLastErrorCode()
+            );
         }
 
         return $result;
