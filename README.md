@@ -16,7 +16,7 @@ This library helps capturing and transforming PHP's error into exception. Part o
 The easiest way to install `Carpediem\Errors` is by using composer.
 
 ```bash
-$ composer require carpediem\errors
+$ composer require carpediem/errors
 ```
 
 ## Requirements
