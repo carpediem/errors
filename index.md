@@ -1,6 +1,6 @@
 ---
 layout: default
-title: errors -  Capture and convert PHP's errors into exceptions
+title: errors -  A library to manages PHP's errors in applications
 ---
 
 Introduction

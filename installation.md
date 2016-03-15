@@ -6,7 +6,7 @@ title: Installation
 System Requirements
 -------
 
-You need **PHP >= 5.5.0** to use `errors` but the latest stable version of PHP/HHVM is recommended.
+You need **PHP >= 5.4.0** to use `errors` but the latest stable version of PHP/HHVM is recommended.
 
 Install
 -------
