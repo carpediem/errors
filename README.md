@@ -11,7 +11,18 @@ Errors
 
 This library helps capturing and transforming PHP's error into exception. Part of this library is based on the excellent work in the [Haldayne\Fox](https://github.com/haldayne/fox) project.
 
-## Installation
+Highlights
+----------
+
+- Enables manipulating PHP's errors in a predicable way
+
+Requirements
+----------
+
+You need **PHP >= 5.4.0** but the latest stable version of PHP/HHVM is recommended.
+
+Installation
+----------
 
 The easiest way to install `Carpediem\Errors` is by using composer.
 
@@ -19,168 +30,23 @@ The easiest way to install `Carpediem\Errors` is by using composer.
 $ composer require carpediem/errors
 ```
 
-## Requirements
+Documentation
+-------
 
-You need **PHP >= 5.4.0** but the latest stable version of PHP/HHVM is recommended.
+Full documentation can be found at [carpediem.github.io/errors](http://carpediem.github.io/errors). Contribute to this documentation in the [gh-pages branch](https://github.com/carpediem/errors/tree/gh-pages)
 
-## Testing
+Testing
+-------
 
 The library has a [PHPUnit](https://phpunit.de) test suite and a coding style compliance test suite using [PHP CS Fixer](http://cs.sensiolabs.org/). To run the tests, run the following command from the project folder.
 
 ```bash
 $ composer test
 ```
-
-## Usage
-
-Let's say you want to use PHP's `touch` function. This function return `false` and emit an `E_WARNING` if the file can not be created. A way to workaround this behavior is to use the `@` operator which is considered to be a bad practice as it silenced error reporting and slow down PHP execution. The `Carpediem\Errors` library helps you better handle these limitations gradually.
-
-
-```php
-$result = touch('/foo/bar');
-//if you don't have access to '/foo' directory
-// $result = false
-// an E_WARNING is emitted with a associated message
-```
-
-If you want to capture the error from the `touch` function.
-
-
-```php
-use Carpediem\Errors\CaptureError;
-
-$touch = new CaptureError('touch');
-$result = $touch('/foo/bar');
-if (!$result) {
-    throw new RuntimeException($touch->getLastErrorMessage(), $touch->getLastErrorCode());
-}
-```
-
-If you want to convert the error from the `touch` function into an Exception.
-
-```php
-use Carpediem\Errors\CaptureError;
-use Carpediem\Errors\ErrorToException;
-
-$touch = new ErrorToException(new CaptureError('touch'));
-try {
-	$result = $touch('/foo/bar');
-} catch (Exception $e) {
-	echo $e->getMessage();  // the same message as CaptureError::getLastErrorMessage
-	echo $e->getCode(); // the same message as CaptureError::getLastErrorCode
-}
-```
-
-## Documentation
-
-### CaptureError object
-
-#### Instantiation
-
-Instantiating a `CaptureError` object is as simple as calling its constructor method with two arguments:
-
-- The callable to be used  **required**;
-- The associated error reporting level as defined by PHP **optional**;
-
-```php
-use Carpediem\Errors\CaptureError;
-
-$copy = new CaptureError('copy', E_WARNING);
-
-$lambda = new CaptureError(function ($source, $destination) {
-    return copy($source, $destination);
-});
-
-$error_level = $lambda->getErrorReportingLevel();
-```
-
-If no reporting level is given, the default value used will be `E_ALL`.
-You can retrieve the current error reporting level with the `CaptureError::getErrorReportingLevel` getter method.
-
-#### Processing the callable
-
-To process the registered callable you need to call the `CaptureError::__invoke` method with the expected parameters for the registered callable as follow:
-
-```php
-use Carpediem\Errors\CaptureError;
-
-$copy = new CaptureError('copy');
-$res = $copy->__invoke('/path/to/source/file.jpg', '/path/to/dest/file.jpg');
-//or
-$res = $copy('/path/to/source/file.errors', '/path/to/dest/file.errors');
-```
-
-#### Accessing the last error properties
-
-If a error is emitted when executing the callable with the right error reporting level you will be able to access its code and message using the following methods:
-
-- `CaptureError::getLastErrorCode` returns PHP's associated error level;
-- `CaptureError::getLastErrorMessage` returns PHP's associated error message;
-
-```php
-use Carpediem\Errors\CaptureError;
-
-$copy = new CaptureError('copy');
-$res = $copy('/path/to/source/file.jpg', '/path/to/dest/file.jpg');
-$copy->getLastErrorCode();
-$copy->getLastErrorMessage();
-```
-
-If no error was caught:
-
-- `CaptureError::getLastErrorCode` will return `0`;
-- `CaptureError::getLastErrorMessage` will return an empty string;
-
-
-### ErrorToException object
-
-#### Instantiation
-
-To instantiate an `ErrorToException` object you need to specify
-
-- an object implementing the `CaptureErrorInterface` interface **required**;
-- The associated Exception class name you want to throw;
-
-```php
-use Carpediem\Errors\CaptureError;
-use Carpediem\Errors\ErrorToException;
-
-$copy = new ErrorToException(new CaptureError('copy', E_WARNING), 'RuntimeException');
-$exceptionName = $copy->getExceptionClassName(); //returns the string 'RuntimeException'
-```
-
-If no exception class is given, the default value used will be `RuntimeException`.
-You can retrieve the current exception class name with the `ErrorToException::getExceptionClass` getter method.
-
-#### Running the code
-
-To process the registered `CaptureError` object you need to call the `ErrorToException::__invoke` method with the expected parameters as follow:
-
-```php
-use Carpediem\Errors\CaptureError;
-use Carpediem\Errors\ErrorToException;
-
-$copy = new ErrorToException(new CaptureError('copy', E_WARNING), 'RuntimeException');
-$res = $copy->__invoke('/path/to/source/file.jpg', '/path/to/dest/file.jpg');
-//or
-$res = $copy('/path/to/source/file.errors', '/path/to/dest/file.errors');
-```
-If the copy can not be achieved a `RuntimeException` object will be thrown.
-
-### CaptureErrorInterface Interface
-
-This interface exposes the following methods:
-
-- `CaptureErrorInterface::__invoke`
-- `CaptureErrorInterface::getLastErrorCode`
-- `CaptureErrorInterface::getLastErrorMessage`
-
-As described in the `CaptureError` documentation, because the `ErrorToException` expects this interface you can easily create your own object that will throw exception depending on the result of calling the `CaptureErrorInterface::__invoke` method.
-
 Contributing
 -------
 
-Contributions are welcome and will be fully credited. Please see [CONTRIBUTING](CONTRIBUTING.md) and [CONDUCT](CONDUCT.md) for details.
+Contributions are welcome and will be fully credited. Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 Security
 -------
